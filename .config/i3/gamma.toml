@@ -1,0 +1,5 @@
+default-gamma = { eDP1 = 1.05 }
+
+[[window]]
+title = "Monitor 1"
+gamma = { DP2 = 1.15 }
