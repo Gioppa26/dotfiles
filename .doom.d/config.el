@@ -32,7 +32,7 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-one
+(setq doom-theme 'doom-Iosvkem
       doom-font (font-spec :family "Iosevka Term SS04" :size 19 :weight 'light)
       doom-big-font (font-spec :family "Iosevka Term SS04":size 36)
       default-directory "/home/giovanni"
@@ -74,23 +74,27 @@
 ;;   (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
 ;;   )
 
-(use-package tex
-  :ensure auctex
-  :defer t
-  :init
-  (setq TeX-auto-save t)
-  (setq TeX-parse-self t)
-  (setq TeX-save-query nil)
-  (setq TeX-PDF-mode t))
+(after! latex
+  ;; Use latexmk for continuous compilation
+  (setq TeX-command-default "LatexMk"
+        TeX-save-query nil
+        TeX-show-compilation nil)
 
-(setq TeX-view-program-selection '((output-pdf "Okular")))
-(setq TeX-view-program-list
-      '(("Okular" "okular --unique %o#src:%n%b")))
+  ;; Enable PDF mode
+  (setq TeX-PDF-mode t)
 
-(load "auctex.el" nil t t)
+  ;; Compile on save
+  (add-hook 'LaTeX-mode-hook
+            (lambda ()
+              (add-hook 'after-save-hook
+                        (lambda ()
+                          (TeX-command-run-all nil))
+                        nil t)))
 
-(with-eval-after-load 'tex
-  (define-key TeX-mode-map (kbd "C-c C-a") 'TeX-command-run-all))
+  ;; Viewer setup for Zathura
+  (setq TeX-view-program-selection '((output-pdf "Zathura"))
+        TeX-source-correlate-start-server t)
+  (setq TeX-source-correlate-mode t))
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
 ;;
